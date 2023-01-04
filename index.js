@@ -2,13 +2,13 @@ const EDIT_BTN_CLASS = 'editBtn';
 const DELETE_BTN_CLASS = 'deleteBtn';
 const CONTACT_ITEM_SELECTOR = '.contactItem';
 
-const form = document.querySelector('#contactForm');
-const inputs = document.querySelectorAll('.formInput');
-const contactContainer = document.querySelector('#contactContainer');
-let contactList = [];
+const $form = $('#contactForm');
+const $inputs = document.querySelectorAll('.formInput');
+const $contactContainer = $('#contactContainer');
+let $contactList = [];
 
 //
-const modalOpenBtn = document.querySelector('.btn-container__open');
+const $modalOpenBtn = $('.btn-container__open');
 const dialog = $( "#contactForm" ).dialog({
     autoOpen: false,
     height: 400,
@@ -22,22 +22,22 @@ const dialog = $( "#contactForm" ).dialog({
     },
 });
 
-modalOpenBtn.addEventListener('click', openModal);
+$modalOpenBtn.on('click', openModal);
 function openModal() {
     // $('.inputs').value = ''
     dialog.dialog( "open" );
 }
 //
 
-form.addEventListener('submit', onAddContactBtnClick);
-contactContainer.addEventListener('click', onContactContainerClick);
+$form.on('submit', onAddContactBtnClick);
+$contactContainer.on('click', onContactContainerClick);
 
 init();
 
 function init() {
     ContactApi.getList()
         .then((list) => {
-            contactList = list;
+            $contactList = list;
             renderContactList(list)
         })
         .catch(showError)
@@ -77,7 +77,7 @@ function onContactContainerClick(e) {
 }
 
 function setFormData(contact) {
-    for (const input of inputs) {
+    for (const input of $inputs) {
         if (Object.hasOwn(contact, input.name)) {
             input.value = contact[input.name];
         }
@@ -87,7 +87,7 @@ function setFormData(contact) {
 function getContact() {
     const contact = {};
 
-    for (const { name, value } of inputs) {
+    for (const { name, value } of $inputs) {
         contact[name] = value;
     }
 
@@ -122,7 +122,7 @@ function saveContact(contact) {
     } else {
         ContactApi.create(contact)
             .then((newContact) => {
-                contactList.push(newContact);
+                $contactList.push(newContact);
                 renderContact(newContact)
                 clearForm();
             })
@@ -132,13 +132,13 @@ function saveContact(contact) {
 }
 
 function renderContactList(contacts) {
-    contactContainer.innerHTML = contacts.map(generateHTML).join('');
+    $contactContainer.html(contacts.map(generateHTML).join(''));
 }
 
 function renderContact(contact) {
     const html = generateHTML(contact);
 
-    contactContainer.insertAdjacentHTML('beforeend', html);
+    $contactContainer.before(html);
 }
 
 function generateHTML(contact) {
@@ -158,7 +158,7 @@ function generateHTML(contact) {
 }
 
 function clearForm() {
-    form.reset();
+    $form.reset();
 }
 
 function showError(error) {
@@ -167,7 +167,7 @@ function showError(error) {
 
 
 function findContactById(id) {
-    return contactList.find(item => item.id === id);
+    return $contactList.find(item => item.id === id);
 }
 
 function updateKeys(id, changes) {

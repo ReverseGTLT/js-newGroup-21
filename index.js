@@ -15,7 +15,6 @@ const dialog = $( "#contactForm" ).dialog({
     width: 350,
     modal: true,
     buttons: {
-        "Create an account": () => {},
         Cancel: function() {
             dialog.dialog( "close" );
         }
@@ -24,8 +23,8 @@ const dialog = $( "#contactForm" ).dialog({
 
 $modalOpenBtn.on('click', openModal);
 function openModal() {
-    // $('.inputs').value = ''
     dialog.dialog( "open" );
+    clearForm();
 }
 //
 
@@ -45,18 +44,14 @@ function init() {
 
 function onAddContactBtnClick(e) {
     e.preventDefault();
-
     const contact = getContact();
-
     if (!isContactValid(contact)) {
         showError(new Error('Wrong input data'));
         return;
     }
-
-    console.log(contact)
-
     saveContact(contact);
     clearForm();
+    dialog.dialog( "close" );
 }
 
 function onContactContainerClick(e) {
@@ -67,11 +62,13 @@ function onContactContainerClick(e) {
     if (contact) {
         if (e.target.classList.contains(DELETE_BTN_CLASS)) {
             contactEl.remove();
+            ContactApi.delete(id)
+                .then((deleteId) => {
+                    console.log(deleteId)
+            })
         } else if (e.target.classList.contains(EDIT_BTN_CLASS)) {
-            //
             dialog.dialog( "open" );
-            //
-            setFormData(contact)
+            setFormData(contact);
         }
     }
 }
@@ -101,7 +98,7 @@ function isContactValid(contact) {
         && isPhone(contact.phone);
 }
 
-function isEmpty(str) { // boolean
+function isEmpty(str) {
     return str === '';
 }
 
@@ -138,7 +135,7 @@ function renderContactList(contacts) {
 function renderContact(contact) {
     const html = generateHTML(contact);
 
-    $contactContainer.before(html);
+    $contactContainer.append(html);
 }
 
 function generateHTML(contact) {
@@ -158,7 +155,7 @@ function generateHTML(contact) {
 }
 
 function clearForm() {
-    $form.reset();
+    $form[0].reset();
 }
 
 function showError(error) {

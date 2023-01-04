@@ -1,0 +1,17 @@
+.formInput {
+    width: 100px;
+}
+
+.formInput.invalid {
+    border-color: red;
+}
+
+.btn-container {
+    position: relative;
+}
+
+.btn-container__open {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
